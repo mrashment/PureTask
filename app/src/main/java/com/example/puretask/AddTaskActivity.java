@@ -30,6 +30,7 @@ public class AddTaskActivity extends AppCompatActivity {
         descriptionEditText = findViewById(R.id.descriptionEditText);
         saveButton = findViewById(R.id.saveButton);
         saveButton.setOnClickListener(new View.OnClickListener() {
+            // save the task to the database
             @Override
             public void onClick(View v) {
                 // TODO

@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        // tasks will hold all the user defined tasks
         tasks = new ArrayList<>();
         tasks.add(new UserTask(id++,"Do Something","Do a thing which I need to do",0));
         tasks.add(new UserTask(id++,"Do Something","Do a thing which I need to do",0));
@@ -46,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(adapter);
 
 
+        // we'll use this to add new tasks
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
