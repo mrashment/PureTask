@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +28,13 @@ public class MainActivity extends AppCompatActivity {
     private TaskAdapter adapter;
     private ArrayList<UserTask> tasks;
     private int id = 1;
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            adapter.notifyDataSetChanged();
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
 
         recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
@@ -43,8 +53,24 @@ public class MainActivity extends AppCompatActivity {
         tasks.add(new UserTask(id++,"Do Something","Do a thing which I need to do",0));
         tasks.add(new UserTask(id++,"Do Something","Do a thing which I need to do",0));
 
-        adapter = new TaskAdapter(tasks);
+        adapter = new TaskAdapter(tasks,this);
         recyclerView.setAdapter(adapter);
+        new Thread() {
+            public void run() {
+                try {
+                    while (true) {
+                        Thread.sleep(1000);
+                        handler.sendEmptyMessage(0);
+                    }
+                } catch (InterruptedException e ) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+
+        }.start();
+
+
+
 
 
 
