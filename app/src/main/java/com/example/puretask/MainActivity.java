@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     Handler handler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
+            // updates the times on items
             adapter.notifyDataSetChanged();
         }
     };
@@ -55,6 +56,8 @@ public class MainActivity extends AppCompatActivity {
 
         adapter = new TaskAdapter(tasks,this);
         recyclerView.setAdapter(adapter);
+
+        // thread to update display each second
         new Thread() {
             public void run() {
                 try {

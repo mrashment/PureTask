@@ -44,24 +44,18 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.MyViewHolder> 
 
     @Override
     public void onBindViewHolder(@NonNull TaskAdapter.MyViewHolder holder, int position) {
-        currentTask = tasks.get(position);
-        currentTimeTextView = holder.timeTextView;
+        UserTask task = tasks.get(position);
 
-        holder.nameTextView.setText(currentTask.getTaskName());
-        holder.timeTextView.setText(String.valueOf(currentTask.getTimeSpent()));
-        holder.startTimerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                currentTask.startTask();
-            }
-        });
+        holder.nameTextView.setText(task.getTaskName());
+        holder.timeTextView.setText(String.valueOf(task.getTimeSpent()));
+
     }
 
     @Override
     public int getItemCount() {
         return tasks.size();
     }
-    class MyViewHolder extends RecyclerView.ViewHolder {
+    class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView nameTextView,timeTextView;
         Button startTimerButton;
 
@@ -71,7 +65,12 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.MyViewHolder> 
             nameTextView = v.findViewById(R.id.nameTextView);
             timeTextView = v.findViewById(R.id.timeTextView);
             startTimerButton = v.findViewById(R.id.startTimerButton);
+            startTimerButton.setOnClickListener(this);
         }
 
+        @Override
+        public void onClick(View v) {
+            tasks.get(this.getLayoutPosition()).startTask();
+        }
     }
 }
