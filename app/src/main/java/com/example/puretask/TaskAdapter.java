@@ -70,7 +70,20 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.MyViewHolder> 
 
         @Override
         public void onClick(View v) {
-            tasks.get(this.getLayoutPosition()).startTask();
+            int pos = this.getLayoutPosition();
+            switch(startTimerButton.getText().toString()) {
+                case "Start":
+                    tasks.get(pos).startTask();
+                    startTimerButton.setText("Stop");
+                    break;
+                case "Stop":
+                    tasks.get(pos).endTask();
+                    startTimerButton.setText("Start");
+                    break;
+                default:
+                    break;
+            }
+
         }
     }
 }
