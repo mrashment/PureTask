@@ -8,6 +8,9 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
@@ -18,11 +21,13 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -35,8 +40,9 @@ import java.io.OutputStreamWriter;
 import java.nio.Buffer;
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AddTaskFragment.OnItemSelectedListener {
 
+    FloatingActionButton fab;
     private RecyclerView recyclerView;
     private TaskAdapter adapter;
     private ArrayList<UserTask> tasks;
@@ -86,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
         }.start();
 
         // we'll use this to add new tasks
-        FloatingActionButton fab = findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -99,9 +105,11 @@ public class MainActivity extends AppCompatActivity {
      * reads data from internal storage
      */
     private void readFromFile() {
+        FileInputStream fis = null;
         try {
-            InputStream is = openFileInput(FILE_NAME);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+            fis = openFileInput(FILE_NAME);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
             StringBuilder sb = new StringBuilder();
 
             String line;
@@ -117,6 +125,14 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally{
+            if (fis != null) {
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
@@ -124,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
      * writes data to internal storage
      */
     private void writeToFile() {
+        FileOutputStream fos = null;
         try {
             StringBuilder sb = new StringBuilder();
 
@@ -133,22 +150,42 @@ public class MainActivity extends AppCompatActivity {
                 sb.append(t.getDesc()).append("\n");
                 sb.append(t.getTimeSpent()).append("\n");
             }
-            FileOutputStream fos = openFileOutput(FILE_NAME,MODE_PRIVATE);
+            fos = openFileOutput(FILE_NAME,MODE_PRIVATE);
             fos.write(sb.toString().getBytes());
-            fos.close();
-
-
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
+    // fragment for new task
     public void createNewTask() {
-        Intent addIntent = new Intent(this,AddTaskActivity.class);
-        startActivity(addIntent);
+        fab.hide();
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        AddTaskFragment fragment = new AddTaskFragment();
+        transaction.replace(R.id.frameLayout,new AddTaskFragment());
+        transaction.addToBackStack(null);
+        transaction.commit();
+
+//        Intent addIntent = new Intent(this,);
+//        startActivity(addIntent);
+    }
+
+    // actually adding to list of tasks
+    public void addTask(String name, String description, int time) {
+        tasks.add(new UserTask(name,description,time));
+        fab.show();
     }
 
     @Override
@@ -178,4 +215,5 @@ public class MainActivity extends AppCompatActivity {
         writeToFile();
         super.onPause();
     }
+
 }
