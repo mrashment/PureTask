@@ -20,6 +20,19 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.Buffer;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -27,7 +40,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private TaskAdapter adapter;
     private ArrayList<UserTask> tasks;
-    private int id = 1;
+    private final String FILE_NAME = "tasks.txt";
+
     Handler handler = new Handler() {
         @Override
         public void handleMessage(@NonNull Message msg) {
@@ -51,8 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         // tasks will hold all the user defined tasks
         tasks = new ArrayList<>();
-        tasks.add(new UserTask(id++,"Do Something","Do a thing which I need to do",0));
-        tasks.add(new UserTask(id++,"Do Something","Do a thing which I need to do",0));
+        readFromFile();
 
         adapter = new TaskAdapter(tasks,this);
         recyclerView.setAdapter(adapter);
@@ -72,11 +85,6 @@ public class MainActivity extends AppCompatActivity {
 
         }.start();
 
-
-
-
-
-
         // we'll use this to add new tasks
         FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +93,57 @@ public class MainActivity extends AppCompatActivity {
                 createNewTask();
             }
         });
+    }
+
+    /**
+     * reads data from internal storage
+     */
+    private void readFromFile() {
+        try {
+            InputStream is = openFileInput(FILE_NAME);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            StringBuilder sb = new StringBuilder();
+
+            String line;
+            while ((line = reader.readLine())!= null) {
+                if (line.contains("***")) {
+                    String name = reader.readLine();
+                    String desc = reader.readLine();
+                    int time = Integer.parseInt(reader.readLine());
+                    tasks.add(new UserTask(name,desc,time));
+                }
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * writes data to internal storage
+     */
+    private void writeToFile() {
+        try {
+            StringBuilder sb = new StringBuilder();
+
+            for (UserTask t : tasks) {
+                sb.append("***\n");
+                sb.append(t.getTaskName()).append("\n");
+                sb.append(t.getDesc()).append("\n");
+                sb.append(t.getTimeSpent()).append("\n");
+            }
+            FileOutputStream fos = openFileOutput(FILE_NAME,MODE_PRIVATE);
+            fos.write(sb.toString().getBytes());
+            fos.close();
+
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public void createNewTask() {
@@ -112,5 +171,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onPause() {
+        writeToFile();
+        super.onPause();
     }
 }

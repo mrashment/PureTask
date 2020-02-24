@@ -5,15 +5,13 @@ import java.util.TimerTask;
 
 public class UserTask {
 
-    private int id;
     private String taskName;
     private String taskDesc;
     private int timeSpent;
     private Timer timer;
     private boolean running;
 
-    public UserTask(int id, String taskName, String taskDesc,int timeSpent) {
-        this.id = id;
+    public UserTask(String taskName, String taskDesc,int timeSpent) {
         this.taskName = taskName;
         this.taskDesc = taskDesc;
         this.running = false;
@@ -26,7 +24,7 @@ public class UserTask {
         int minutes = (timeSpent%3600)/60;
         int hours = timeSpent/3600;
         String taskString = "";
-        taskString += this.getTaskId() + "\tName: " + this.taskName + "\n";
+        taskString += "\tName: " + this.taskName + "\n";
         taskString += "\tDescription: " + this.taskDesc;
         taskString += "\n\tTime spent on this task: " + hours + " hour(s) " + minutes + " minute(s) " + seconds + " second(s)";
         taskString += "\n\tRunning: " + this.getRunning();
@@ -65,7 +63,6 @@ public class UserTask {
 
 
     //getters
-    public int getTaskId() { return this.id; }
     public String getTaskName() { return this.taskName; }
     public String getDesc() { return this.taskDesc; }
     public int getTimeSpent() { return this.timeSpent; }
