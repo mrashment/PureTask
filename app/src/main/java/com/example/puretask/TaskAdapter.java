@@ -32,13 +32,6 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.MyViewHolder> 
     public TaskAdapter.MyViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.task_item,parent,false);
 
-        v.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent detailIntent = new Intent(v.getContext(),TaskDetailActivity.class);
-                v.getContext().startActivity(detailIntent);
-            }
-        });
         return new MyViewHolder(v);
     }
 
@@ -63,6 +56,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.MyViewHolder> 
         public MyViewHolder(@NonNull View v) {
             super(v);
 
+            v.setOnClickListener(this);
             nameTextView = v.findViewById(R.id.nameTextView);
             timeTextView = v.findViewById(R.id.timeTextView);
             startTimerButton = v.findViewById(R.id.startTimerButton);
@@ -72,17 +66,24 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.MyViewHolder> 
         @Override
         public void onClick(View v) {
             int pos = this.getLayoutPosition();
-            switch(startTimerButton.getText().toString()) {
-                case "Start":
-                    tasks.get(pos).startTask();
-                    startTimerButton.setText("Stop");
-                    break;
-                case "Stop":
-                    tasks.get(pos).endTask();
-                    startTimerButton.setText("Start");
-                    break;
-                default:
-                    break;
+            if (v instanceof Button) {
+                switch (startTimerButton.getText().toString()) {
+                    case "Start":
+                        tasks.get(pos).startTask();
+                        startTimerButton.setText("Stop");
+                        break;
+                    case "Stop":
+                        tasks.get(pos).endTask();
+                        ((MainActivity)context).writeToFile();
+                        startTimerButton.setText("Start");
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                Intent intent = new Intent(context,TaskDetailActivity.class);
+                intent.putExtra("UserTask",tasks.get(pos));
+                context.startActivity(intent);
             }
 
         }

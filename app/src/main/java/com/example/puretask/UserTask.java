@@ -1,15 +1,18 @@
 package com.example.puretask;
 
+import java.io.Serializable;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class UserTask {
+public class UserTask implements Serializable {
 
     private String taskName;
     private String taskDesc;
     private int timeSpent;
     private Timer timer;
     private boolean running;
+
+    class Timer extends java.util.Timer implements Serializable { }
 
     public UserTask(String taskName, String taskDesc,int timeSpent) {
         this.taskName = taskName;

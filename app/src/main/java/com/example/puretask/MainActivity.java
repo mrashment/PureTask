@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity implements AddTaskFragment.O
     /**
      * writes data to internal storage
      */
-    private void writeToFile() {
+    public void writeToFile() {
         FileOutputStream fos = null;
         try {
             StringBuilder sb = new StringBuilder();

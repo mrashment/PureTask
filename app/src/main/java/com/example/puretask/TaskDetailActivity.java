@@ -16,6 +16,7 @@ import org.w3c.dom.Text;
 public class TaskDetailActivity extends AppCompatActivity {
 
     TextView nameTextView,descriptionTextView;
+    UserTask task;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,9 +25,17 @@ public class TaskDetailActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
         nameTextView = findViewById(R.id.nameTextView);
         descriptionTextView = findViewById(R.id.descriptionTextView);
 
+        try {
+            task = (UserTask)getIntent().getSerializableExtra("UserTask");
+        nameTextView.setText(task.getTaskName());
+        descriptionTextView.setText(task.getDesc());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 }
