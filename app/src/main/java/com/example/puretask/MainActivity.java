@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -41,7 +42,7 @@ import java.nio.Buffer;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements AddTaskFragment.OnItemSelectedListener {
-
+    private static final String TAG = "MainActivity";
     FloatingActionButton fab;
     private RecyclerView recyclerView;
     private TaskAdapter adapter;
@@ -83,6 +84,7 @@ public class MainActivity extends AppCompatActivity implements AddTaskFragment.O
                     while (true) {
                         Thread.sleep(1000);
                         handler.sendEmptyMessage(0);
+
                     }
                 } catch (InterruptedException e ) {
                     Thread.currentThread().interrupt();
@@ -149,9 +151,11 @@ public class MainActivity extends AppCompatActivity implements AddTaskFragment.O
                 sb.append(t.getTaskName()).append("\n");
                 sb.append(t.getDesc()).append("\n");
                 sb.append(t.getTimeSpent()).append("\n");
+                Log.d(TAG, "writeToFile: appended " + sb.toString());
             }
             fos = openFileOutput(FILE_NAME,MODE_PRIVATE);
             fos.write(sb.toString().getBytes());
+            fos.flush();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

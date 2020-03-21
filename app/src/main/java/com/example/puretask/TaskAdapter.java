@@ -55,6 +55,7 @@ public class TaskAdapter extends RecyclerView.Adapter<TaskAdapter.MyViewHolder> 
     public int getItemCount() {
         return tasks.size();
     }
+
     class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView nameTextView,timeTextView;
         Button startTimerButton;
